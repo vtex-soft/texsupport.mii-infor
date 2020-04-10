@@ -1,4 +1,4 @@
-# texsupport.springer-sola
+# texsupport.mii-infor
 
 LaTeX author support files for the journal  
 [INFORMATICA](https://informatica.vu.lt/journal/INFORMATICA)

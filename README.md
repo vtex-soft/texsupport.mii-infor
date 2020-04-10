@@ -1,8 +1,12 @@
-INFOR journal document class.
- 
-[https://informatica.vu.lt/journal/INFORMATICA](https://informatica.vu.lt/journal/INFORMATICA)
+# texsupport.springer-sola
 
-Distributed files include:
+LaTeX author support files for the journal  
+[INFORMATICA](https://informatica.vu.lt/journal/INFORMATICA)
+
+
+## Contents
+
+The following files are given in the repository (or directly in `.zip` archive):
 
 - `informanual.pdf` - author's instructions
 - `infor_sample.tex` - a sample article
@@ -12,16 +16,18 @@ Distributed files include:
 - `infor.bst` - Bibtex style
 - `biblio.bib` - Bibtex DB sample
 
-Compile:
+## Setup
 
-    `latex paper`
+-   Clone the repository or download the `.zip` archive.
+-   Install LaTeX style files (`infor.cls`, `infor.bst`) 
+    in your TeX system or place them in the same directory where your `*.tex` file is.
+-   Read the instructions (`informanual.pdf`) for the preparation of your LaTeX document.
+-   Use the template file `infor_template.tex` to prepare your manuscript.
 
-or
+## Bug reports
 
-    `pdflatex paper`
-	
-Produce bbl:
+Please submit bug reports and/or feature requests
+at [GitHub page](https://github.com/vtex-soft/texsupport.mii-infor/issues) or 
+[latex-support@vtex.lt](mailto:latex-support@vtex.lt).
 
-    `bibtex paper`
 
-VTeX UAB, 2020/04/08

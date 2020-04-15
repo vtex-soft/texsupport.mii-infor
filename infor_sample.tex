@@ -11,35 +11,26 @@
 \newtheorem{lemma}{Lemma}
 \newtheorem{cor}{Corollary}
 
-\theoremstyle{definition}
+\theoremstyle{remark}
 \newtheorem{defin}{Definition}
 
 \hyphenation{de-si-de-rium}
 
-\def\SM#1#2{\sum_{#1\in #2}}
-\def\FL#1{\left\lfloor #1 \right\rfloor}
-\def\FR#1#2{{\frac{#1}{#2}}}
 
 \begin{document}
 \begin{frontmatter}
 \pretitle{Research Article}
 
 \title{A sample document}
-\author[a]{\inits{F.}\fnms{First-Name1}~\snm{Surname-1}\thanksref{cor1}\ead[label=e1]{first@somewhere.com}\orcid{0000-0000-0000-0000}}
-\thankstext[type=corresp,id=cor1]{Corresponding author.}
 
-\author[b]{\inits{S.}\fnms{First-Name2}~\snm{Surname-2}\thanksref{f1}\ead[label=e2]{second@somewhere.com}}
-\thankstext[id=f1]{Some remarks.}
-
-\address[a]{\institution{Institution of the First author}, \\
-Street 123, ZIP City, \cny{Country}}
-
-\address[b]{Address of the Second author\\
-usually few lines long}
+\author[a]{\inits{F.}\fnms{Firstname1} \snm{Surname1}\thanksref{c1}\ead[label=e1]{aut1@foo.com}\bio{bio1}}
+\author[b]{\inits{S.}\fnms{Firstname2} \snm{Surname2}\thanksref{f1}\ead[label=e2]{aut2@foo.com}\bio{bio2}}
+\thankstext[type=corresp,id=c1]{Corresponding author.}
+\thankstext[id=f1]{Simple footnote.}
+\address[a]{Address of the First author, \institution{University}, \cny{Country name}}
+\address[b]{Address of the Second author, \institution{University}, \cny{Country name}}
 
 \dedicated{Dedicated to}
-
-%\markboth{F. Author, S. Author}{A sample document}
 
 \begin{abstract}
 Omnes hanc ergo sequamur qua cum gratia mereamur vitam aeternam.
@@ -55,15 +46,9 @@ benedixit filiis tuis in te.
 \kwd{\LaTeX}
 \end{keywords}
 
-\begin{keywords}[MSC2010]%
-\kwd{00K00}
-\kwd{00K01}
-\end{keywords}
-
 \end{frontmatter}
 
 \section{Short head one}
-
 
 Isi aedificaverit domum \citep{BLG09,BlanLedShi10}, in vanum
 \cite*{XiuliChao1999} laboraverunt qui aedificant eam.
@@ -75,7 +60,7 @@ potentis: ita filii excussorum. Beatus vir qui implevit desiderium
 suum ex pisis: non confundetus cum loquetur inimicis suis in porta.
 Ideo dilexit me rex et introduxit me in cubiculum suum et dixit
 mihi.
-Surge, amica mea, et veni\index{entry!subentry}.
+Surge, amica mea, et veni.
 Ideo dilexit me rex et introduxit me in cubiculum suum et dixit
 mihi.
 Ideo dilexit me rex et introduxit me in cubiculum suum et dixit
@@ -103,57 +88,76 @@ felix porta, per quam mors fuit expulsa, introduxit autem vitam. Quae
 semper tutum est medium inter homines et deum, pro culpis remedium.
 %
 \begin{align}
-\gamma^\mu  & =
- \left(
+\gamma^\mu & =
+\left(
+%
 \begin{array}{cc}
 0            & \sigma^\mu_+ \\
-\sigma^\mu_- & 0
+\sigma^\mu_- & 0            
 \end{array}
+%
 \right),
 \qquad
 \gamma^5= \left(
+%
 \begin{array}{cc}
 -1 & 0 \\
 0  & 1
 \end{array}
-\right),\nonumber \\
-\sigma^\mu_{\pm}  & =    ({\bf 1} ,\pm \sigma) , \nonumber
+%
+\right),\nonumber\\
+\sigma^\mu_{\pm} & = ({\bf1} ,\pm\sigma) , \nonumber
 \end{align}
+%
 giving
+%
 \begin{equation}
 \hat a= \left(
+%
 \begin{array}{cc}
 0          & (\hat a)_+ \\
 (\hat a)_- & 0
-\end{array}\right),\quad (\hat a)_\pm=a_\mu\sigma^\mu_\pm ,
+\end{array}
+%
+\right),\quad(\hat a)_\pm=a_\mu\sigma^\mu_\pm,
 \end{equation}
+%
 Two equations:
+%
 \begin{equation}
-    C_{s}  =  K_{M} \frac{\mu/\mu_{x}}{1-\mu/\mu_{x}} \label{ccs}
+C_{s} = K_{M} \frac{\mu/\mu_{x}}{1-\mu/\mu_{x}} \label{ccs}
 \end{equation}
+%
 and
+%
 \begin{equation}
-    G = \frac{P_{\rm opt} - P_{\rm ref}}{P_{\rm ref}} \mbox{\ }100 \mbox{\
-    }(\%).
+G = \frac{P_{\rm opt} - P_{\rm ref}}{P_{\rm ref}}\ 100\ (\%).
 \end{equation}
 
 Long equation:
+%
 \begin{align}
-\SM u{C^+}\FL{\FR{w'(u)}m} & \le \FL{\SM u{C^+} \FR{w'(u)}m}\nonumber\\
-                           & \le \FL{\FR{r(v)+\SM u{C^+} w(u)}m} = \FL{\FR{w(v)-\SM u{C^-} w(u)}m}\nonumber \\
-                           & \le \FL{\FR{w(v)}m}-\SM u{C^-}\FL{\FR{w(u)}m} = s(v)+\SM u{C^+}\FL{\FR{w(u)}m}
+\sum_{u\in C^+}\left\lfloor{\frac{w'(u)}{m}} \right\rfloor 
+    & \le \left\lfloor\sum_{u\in C^+} {\frac{w'(u)}{m}} \right\rfloor \nonumber \\
+    & \le \left\lfloor{\frac{r(v)+\sum_{u\in C^+} w(u)}{m}} \right \rfloor = \left\lfloor{\frac{w(v)-\sum_{u\in C^-} w(u)}{m}} \right \rfloor \nonumber \\
+    & \le \left\lfloor{\frac{w(v)}{m}} \right\rfloor -\sum_{u\in C^-}\left\lfloor{\frac{w(u)}{m}} \right\rfloor = s(v)+\sum_{u\in C^+}\left\lfloor{\frac{w(u)}{m}} \right\rfloor
 \end{align}
+%
 and
+%
 \begin{align}
-\SM u{C^-}\FL{\FR{w(u)}m} & \le \FL{\SM u{C^-} \FR{w(u)}m}\nonumber\\
-                          & \le \FL{\FR{r'(v)+\SM u{C^-} w'(u)}m} = \FL{\FR{w'(v)-\SM u{C^+} w'(u)}m}\nonumber \\
-                          & \le \FL{\FR{w'(v)}m}-\SM u{C^+}\FL{\FR{w'(u)}m} = s'(v)+\SM u{C^-}\FL{\FR{w'(u)}m}.
+\sum_{u\in C^-}\left\lfloor{\frac{w(u)}{m}} \right\rfloor
+    & \le \left\lfloor\sum_{u\in C^-} {\frac{w(u)}{m}} \right\rfloor \nonumber \\
+    & \le \left\lfloor{\frac{r'(v)+\sum_{u\in C^-} w'(u)}{m}} \right \rfloor = \left\lfloor{\frac{w'(v)-\sum_{u\in C^+} w'(u)}{m}} \right\rfloor \nonumber\\
+    & \le \left\lfloor{\frac{w'(v)}{m}} \right\rfloor -\sum_{u\in C^+}\left\lfloor{\frac{w'(u)}{m}} \right\rfloor = s'(v)+\sum _{u\in C^-}\left\lfloor{\frac{w'(u)}{m}} \right\rfloor .
 \end{align}
+%
 This time we have
+%
 \begin{align}
-f(S)-f(T) = {} & D_k^T\bigl(1+C_{\geq k+1}^T\bigr)(1 + C) + C_k^T\bigl(1+D_{\geq k+1}^T\bigr)(1 + D) \nonumber   \\
-{}             & - C_k^T\bigl(1+C_{\geq k+1}^T\bigr)(1 + C) - D_k^T\bigl(1+D_{\geq k+1}^T\bigr)(1 + D) \nonumber \\
-= {}           & \bigl(D_k^T-C_k^T\bigr)\bigl[(1+C_{\geq k+1})(1+C)-\bigl(1+D_{\geq k+1}^T\bigr)(1+D)\bigr]>0.
+f(S)-f(T) = {} & D_k^T\bigl(1+C_{\geq k+1}^T\bigr)(1 + C) + C_k^T\bigl(1+D_{\geq k+1}^T\bigr)(1 + D) \nonumber    \\
+            {} & - C_k^T\bigl(1+C_{\geq k+1}^T\bigr)(1 + C) - D_k^T\bigl (1+D_{\geq k+1}^T\bigr)(1 + D) \nonumber \\
+          = {} & \bigl(D_k^T-C_k^T\bigr)\bigl[(1+C_{\geq k+1})(1+C)-\bigl (1+D_{\geq k+1}^T\bigr)(1+D)\bigr]>0.
 \end{align}
 
 Omnes hanc ergo sequamur qua cum gratia mereamur vitam aeternam.
@@ -181,7 +185,7 @@ inter homines et deum, pro culpis remedium.
 
 
 \begin{table}
-\caption{Table caption}\label{tbl-2} %% no full stop at the end of caption
+\caption{Table caption.}\label{tbl-2}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}crrrrrrrr@{}}
 \hline
 Star & Height & \multicolumn{1}{c}{$d_{x}$} &
@@ -192,11 +196,11 @@ Star & Height & \multicolumn{1}{c}{$d_{x}$} &
 \multicolumn{1}{c}{$R_{min}$} &
 \multicolumn{1}{c}{$P$}  \\
 \hline
-1 &33472.5 &-0.1 &0.4  &53 &27.4 &2.065  &1.940 &3.900\\
-2 &27802.4 &-0.3 &-0.2 &60 &3.7  &1.628  &1.510 &2.156\\
-3 &29210.6 &0.9  &0.3  &60 &3.4  &1.622  &1.551 &2.159\\
-4 &32733.8 &-1.2 &-0.5 &41 &54.8 &2.282  &2.156 &4.313\\
-5 & 9607.4 &-0.4 &-0.4 &60 &1.4  &1.669  &1.574 &2.343\\
+1 &33472.5 &-0.1 &0.4  &53 &27.4  &2.065  &1.940 &3.900\\
+2 &27802.4 &-0.3 &-0.2 &60 &3.7   &1.628  &1.510 &2.156\\
+3 &29210.6 &0.9  &0.3  &60 &3.4   &1.622  &1.551 &2.159\\
+4 &32733.8 &-1.2 &-0.5 &41 &54.8  &2.282  &2.156 &4.313\\
+5 & 9607.4 &-0.4 &-0.4 &60 &1.4   &1.669  &1.574 &2.343\\
 6 &31638.6 &1.6  &0.1  &39 &315.2 & 3.433 &3.075 &7.488\\
 \hline
 \end{tabular*}
@@ -239,10 +243,9 @@ liquefaciet ea; flabit spiritus eius, et fluent aquae.
 
 \begin{figure}[t]
 \includegraphics[scale=.4]{uslogo}%uslogo(.eps,.pdf)
-\caption{%
-Nisi custodierit civitatem, frustra vigilat qui custodit eam. Vanum
+\caption{Nisi custodierit civitatem, frustra vigilat qui custodit eam. Vanum
 est vobis ante lucem surgere: surgite postquam sederitis, qui
-manducatis panem doloris}\label{f1} %% no full stop at the end of caption
+manducatis panem doloris.}\label{f1}
 \end{figure}
 
 
@@ -279,7 +282,7 @@ postquam sederitis, qui manducatis panem doloris.
 
 \begin{figure}[t]
 \includegraphics{dice}% dice(.eps,.pdf)
-\caption{Nisi custodierit civitatem}\label{f2} %% no full stop at the end of caption
+\caption{Nisi custodierit civitatem.}\label{f2}
 \end{figure}
 
 Figure \ref{f2} sicut sagittae in many potentis: ita filii excussorum. Beatus vir qui
@@ -318,7 +321,7 @@ consurgens ut aurora rutilat ut beneficam (Table~\ref{t1}).
 
 
 \begin{table}[t]
-\caption{One-column table}\label{t1}
+\caption{One-column table.}\label{t1}
 \begin{tabular}{@{}ll}
 \hline
 Wavelength range       & 0.35--1.7~\textmu m  \\
@@ -469,6 +472,15 @@ laetitia terras, caelos.
 
 \bibliographystyle{infor}
 \bibliography{biblio}
+\vfill
+
+\begin{biography}\label{bio1}
+\author{F. Surname1} obtained his PhD in \ldots
+\end{biography}
+
+\begin{biography}\label{bio2}
+\author{S. Surname2} is a research professor at \ldots
+\end{biography}
 
 
 \end{document}

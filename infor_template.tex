@@ -5,16 +5,21 @@
 \pubyear{2020}
 \articletype{research-article}
 \doi{0000}
+
+
 %startlocaldefs
 
 % local macros
 %\newtheorem{thm}{Theorem}
-%\theoremstyle{definition}
-%\newtheorem{defin}{Definition}
+%\newtheorem{prop}{Proposition}
+%\newtheorem{cor}{Corollary}
+%\newtheorem{lem}{Lemma}
 
-%% \theoremstyle{plain}% Theorems
-%% \theoremstyle{definition} %Proclaim
-%% \theoremstyle{remark}% Remark
+%\theoremstyle{remark}
+%\newtheorem{defn}{Definition}
+%\newtheorem{rem}{Remark}
+%\newtheorem{exmp}{Example}
+%\newtheorem{note}{Note}
 
 %endlocaldefs
 
@@ -25,14 +30,18 @@
 \pretitle{Research Article}
 
 \title{}
+%\title{\thanksref{t1}}
+%\thankstext[id=t1]{}
 
-\author[]{\inits{}\fnms{}~\snm{}\thanksref{}\ead[label=]{}\orcid{}}
+\author[]{\inits{}\fnms{}~\snm{}\thanksref{}\ead[label=]{}\orcid{}\bio{}}
 \thankstext[type=corresp,id=]{}
 %\thankstext[id=]{}
 \address[]{\institution{}, ..., \cny{}}
 
+%\runtitle{}  %use if necessary to change auto-generated           
+%\runauthor{} %use if necessary to change auto-generated            
+
 %\dedicated{}
-%\markboth{}{}
 
 \begin{abstract}
 Abstract
@@ -41,15 +50,10 @@ Abstract
 \begin{keywords}
 \kwd{}
 \kwd{}
-\end{keywords}
-
-\begin{keywords}[MSC2010]
-\kwd{}
 \kwd{}
 \end{keywords}
 
 \end{frontmatter}
-
 
 
 \section{}\label{}
@@ -100,5 +104,11 @@ Abstract
 %%%%%%%%%%%%%%%%%%%%%%
 %\bibliographystyle{infor}
 %\bibliography{biblio}
+
+%% Biography %%
+%%%%%%%%%%%%%%%%%%%%%%
+%\begin{biography}\label{}
+%\author{} 
+%\end{biography}
 
 \end{document} 

@@ -16,7 +16,7 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2020/04/05 v0.0.00 Informatica Journal class]
+\ProvidesClass{infor}[2020/04/29 v0.03.00 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
@@ -25,13 +25,16 @@
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions*
 
+% Customization of fonts
+\RequirePackage{tgheros}
+\RequirePackage{tgtermes}
+
 \RequirePackage[T1]{fontenc}
 \usepackage{textcomp}
 \LoadClass{article}
 \let\CRC\relax
 \let\xch\@gobble
 \def\nohyphen{\pretolerance=\@M \tolerance=\@M \hyphenpenalty=\@M \exhyphenpenalty=\@M}
-
 
 \InputIfFileExists{infor.cfg}{}{}
 
@@ -43,6 +46,12 @@
 \def\@JID{INFOR}
 
 %************************* FONTS
+\renewcommand{\ttdefault}{pcr}
+\normalfont\normalsize
+\renewcommand\sldefault{it}
+\renewcommand\bfdefault{b}
+\let\slshape\itshape
+
 \def\@xivpt{14}
 \def\@xviipt{17}
 \def\@xviiipt{18}
@@ -77,15 +86,6 @@
 \renewcommand\LARGE{\@setfontsize\LARGE\@xviipt{22}}
 \renewcommand\huge{\@setfontsize\huge\@xxpt{26}}
 \renewcommand\Huge{\@setfontsize\Huge\@xxivpt{26}}
-
-% Customization of fonts
-\RequirePackage{tgheros}
-\RequirePackage{tgtermes}
-\renewcommand{\ttdefault}{pcr}
-\normalfont\normalsize
-\renewcommand\sldefault{it}
-\renewcommand\bfdefault{b}
-\let\slshape\itshape
 
 \def\doiprefix#1{\gdef\doi@prefix{#1}}
 \def\doi@prefix{DOI:~}
@@ -188,44 +188,31 @@
 \skip\@mpfootins=\skip\footins
 \preto\eqnarray{\topsep=\the\abovedisplayskip}
 
-\RequirePackage{amssymb}
-
-\let\kernel@bordmatrix@left(                                       
-\let\kernel@bordmatrix@right)
-\def\kernel@bordermatrix#1{%
-    \begingroup 
-        \m@th \@tempdima 8.75\p@
-        \setbox\z@\vbox{%
-            \def\cr{\crcr\noalign{\kern2\p@\global\let\cr\endline}}%
-            \ialign{$##$\hfil\kern2\p@\kern\@tempdima&\thinspace\hfil$##$\hfil
-  	        &&\quad\hfil$##$\hfil\crcr
-                \omit\strut\hfil\crcr\noalign{\kern-\baselineskip}%
-	        #1\crcr\omit\strut\cr
-                }%
-            }%
-        \setbox\tw@\vbox{\unvcopy\z@\global\setbox\@ne\lastbox}%
-        \setbox\tw@\hbox{\unhbox\@ne\unskip\global\setbox\@ne\lastbox}%
-        \setbox\tw@\hbox{$\kern\wd\@ne\kern-\@tempdima
-            \left\kernel@bordmatrix@left\kern-\wd\@ne
-            \global\setbox\@ne\vbox{\box\@ne\kern2\p@}%
-            \vcenter{\kern-\ht\@ne\unvbox\z@\kern-\baselineskip}
-            \,\right\kernel@bordmatrix@right$%
-            }%
-        \null\;\vbox{\kern\ht\@ne\box\tw@}%
-    \endgroup
-    }
+\def\kernel@bordmatrix@left{(}                                       
+\def\kernel@bordmatrix@right{)}
 \def\set@bordermatrix@braces#1#2{%
-    \let\kernel@bordmatrix@left#1\relax
-    \let\kernel@bordmatrix@right#2\relax
-    \kernel@bordermatrix
+    \def\kernel@bordmatrix@left{#1}%
+    \def\kernel@bordmatrix@right{#2}%
     }
 \def\bordermatrix#1#{%
     \ifx\relax#1\relax
-        \expandafter\kernel@bordermatrix
     \else
-        \expandafter\set@bordermatrix@braces
-    \fi#1%
+      \set@bordermatrix@braces #1\empty\empty%
+    \fi
+    \kernel@bordermatrix
     }
+\let\amsmath@bordermatrix\bordermatrix
+
+\def\kernel@bordermatrix#1{{%
+  \csuse{pre@bordermatrix@hook}%
+  \left\kernel@bordmatrix@left
+  \env@matrix
+  #1%
+  \endmatrix    
+  \right\kernel@bordmatrix@right
+  \csuse{post@bordermatrix@hook}%
+  }}
+
 
 \AtBeginDocument{%
   \def\tfrac#1#2{{\textstyle\frac{#1}{#2}}}%
@@ -352,7 +339,7 @@
 
 % FOOTNOTES
 \setlength\footnotesep{6.65\p@}
-\setlength{\skip\footins}{24\p@ \@plus 6\p@}
+\setlength{\skip\footins}{12\p@ \@plus 6\p@}
 
 % FRAMED BOXES
 \setlength\fboxsep{3\p@}
@@ -751,10 +738,11 @@
 \def\ps@headings{%
   \let\@oddfoot\@empty\let\@evenfoot\@empty
   \def\@evenhead{\small\rlap{\thepage}\hfill\textit{\leftmark}\hfill}%
+  %% reserved 3 digits for page number 
   \def\pseudo@head@line{{%
       \small
       \hfil{\itshape\rightmark}\hfil
-      \hbox{\quad \thepage}}%
+      \hbox{\quad 000}}%
       }%
   \def\@oddhead{%
     \csname check@head@line\endcsname
@@ -858,6 +846,7 @@
 % Format for the counter:
 \def\@seccntformat#1{\expandafter\upshape{\csname the#1\endcsname}.\enspace}
 
+% ************************ FLOATS
 %% caption
 \RequirePackage{caption}
 \captionsetup{margin=0pt,font=footnotesize,labelsep=period,skip=11pt}
@@ -867,16 +856,43 @@
   \def\caption@lsep{\\}
   }
 \appto\caption@beginhook{\csuse{\@captype @caption@setup}}
-\renewcommand\figurename{Fig.}
 
-\def\floatfmt{\centering\footnotesize}
-\appto\@floatboxreset\floatfmt
+\renewcommand\figurename{Fig.}
+\def\fps@figure{tbp}
+\def\ftype@figure{1}
+
+\def\fps@table{tbp}
+\def\ftype@table{2}
+
+\appto\@floatboxreset{\csuse{@\@captype boxreset}}
+\def\@figureboxreset{\centering\footnotesize}
+\def\@tableboxreset{\centering\footnotesize}
 
 \setlength\floatsep       {18\p@ \@plus 6\p@ \@minus 2\p@}
 \setlength\textfloatsep   {18\p@ \@plus 6\p@ \@minus 2\p@}
 \setlength\intextsep      {18\p@ \@plus 6\p@ \@minus 2\p@}
 \setlength\dblfloatsep    {18\p@ \@plus 6\p@ \@minus 2\p@}
 \setlength\dbltextfloatsep{24\p@ \@plus 6\p@ \@minus 2\p@}
+
+%  For floats on a separate float page or column:
+\setlength\@fptop   {0\p@ \@plus 1fil}
+\setlength\@fpsep   {8\p@ \@plus 1000fil}
+\setlength\@fpbot   {0\p@ \@plus 1fil}
+\setlength\@dblfptop{0\p@ \@plus 1fil}
+\setlength\@dblfpsep{8\p@ \@plus 1000fil}
+\setlength\@dblfpbot{0\p@ \@plus 1fil}
+
+%  Float counters:
+\setcounter{topnumber}{5}
+\renewcommand\topfraction{.99}
+\setcounter{bottomnumber}{5}
+\renewcommand\bottomfraction{.99}
+\setcounter{totalnumber}{10}
+\renewcommand\textfraction{.05}
+\renewcommand\floatpagefraction{.9}
+\setcounter{dbltopnumber}{5}
+\renewcommand\dbltopfraction{.99}
+\renewcommand\dblfloatpagefraction{.8}
 
 %
 %************************** TABULAR
@@ -922,7 +938,8 @@
             \ClassError{\fmt@name}{At least one email address is required!}{}%
         \fi
     \fi
-    \par\unskip
+    \par
+    \ifhmode\unskip\fi
     \vskip\endfrontmater@skip
   }
 \def\check@articletype@pretitle@status{%
@@ -1549,11 +1566,12 @@
   \ifx\@tempb\@empty
     #3%
   \else
+    %% no need links on author marks
+    \let\hyper@@link\@gobbletwo
     #3\fm@textsuperscript{#2}%
   \fi
   }
 \def\fm@textsuperscript#1{%
-  %$^{\mathrm{\scriptsize #1}}$%
   \unskip\textsuperscript{{\normalfont #1}}%
   }
 
@@ -1583,7 +1601,7 @@
   \ifnum\note@cnt>\@ne
     \add@xtok\t@loc@notes{\note@sep}%
   \fi
-  \add@tok\t@loc@notes{#1}%
+  \add@tok\t@loc@notes{\ref{aff.#1}}%
   }
 \def\note@sep{,}
 %% <<< author setup <<<
@@ -1612,7 +1630,7 @@
     }{%
       \xappto\address@list{,address\the\c@address}%
     }%
-  \label{#1}%
+  \label{aff.#1}%
   \csname address@end@hook\endcsname
   \ignorespaces
   }
@@ -1642,7 +1660,7 @@
   \ignorespaces
   }
 
-\def\theaddress{\alph{address}}
+\def\theaddress{\the\c@address}
 
 \def\address@fmt#1#2#3{%
   \ifdefined\address@fmt@init@done
@@ -1652,15 +1670,16 @@
   \bgroup
     \def\baselinestretch{1}%
     \address@font
+    {\baselineskip=0pt\par}% add paragraph without aditional line skip
+    \def\\{\linebreak}%  
     \ifnum#1=\z@
-      #3\,\fm@textsuperscript{#2}\space
     \else
-      \ifnum#1=\m@ne
-        \phantom{\fm@textsuperscript{\@alph{#1}}\,}#3\,\fm@textsuperscript{#2}%
-      \else
-        \fm@textsuperscript{\@alph{#1}}#3\fm@textsuperscript{#2}%
-      \fi
+      \setbox\@tempboxa\hbox{\fm@textsuperscript{#1}\,}%
+      \parshape 2 0pt \textwidth % firs line of address not indented
+                  \wd\@tempboxa \the\dimexpr\textwidth -\wd\@tempboxa\relax % rest of the lines indented by the width of mark
+      \unhbox\@tempboxa 
     \fi
+    #3\fm@textsuperscript{#2}%
     \par
   \egroup
   }
@@ -2171,7 +2190,7 @@
 
 %% Acknowledgement
 \define@key{acknowledgement}{title}{\def\acknowledgement@title{#1}}
-\def\acknowledgement@title{Acknowledgement}
+\def\acknowledgement@title{Acknowledgements}
 \newenvironment{acknowledgement}[1][]%
   {%
     \setkeys{acknowledgement}{#1}%

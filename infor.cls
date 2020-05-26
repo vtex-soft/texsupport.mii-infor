@@ -16,7 +16,7 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2020/04/29 v0.03.00 Informatica Journal class]
+\ProvidesClass{infor}[2020/05/26 v0.07.00 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
@@ -35,6 +35,10 @@
 \let\CRC\relax
 \let\xch\@gobble
 \def\nohyphen{\pretolerance=\@M \tolerance=\@M \hyphenpenalty=\@M \exhyphenpenalty=\@M}
+
+\DeclareRobustCommand\surl[1]{\url{#1}}
+\DeclareRobustCommand\doiurl[1]{\url{#1}}
+\DeclareRobustCommand\arxivurl[1]{\url{#1}}
 
 \InputIfFileExists{infor.cfg}{}{}
 
@@ -188,31 +192,44 @@
 \skip\@mpfootins=\skip\footins
 \preto\eqnarray{\topsep=\the\abovedisplayskip}
 
-\def\kernel@bordmatrix@left{(}                                       
-\def\kernel@bordmatrix@right{)}
+\let\kernel@bordmatrix@left(                                       
+\let\kernel@bordmatrix@right)
+\def\kernel@bordermatrix#1{%
+    \begingroup 
+        \@nameuse{boredematrix@begin@hook}%
+        \m@th \@tempdima 8.75\p@
+        \setbox\z@\vbox{%
+            \def\cr{\crcr\noalign{\kern2\p@\global\let\cr\endline}}%
+            \ialign{$##$\hfil\kern2\p@\kern\@tempdima&\thinspace\hfil$##$\hfil
+  	        &&\quad\hfil$##$\hfil\crcr
+                \omit\strut\hfil\crcr\noalign{\kern-\baselineskip}%
+	        #1\crcr\omit\strut\cr
+                }%
+            }%
+        \setbox\tw@\vbox{\unvcopy\z@\global\setbox\@ne\lastbox}%
+        \setbox\tw@\hbox{\unhbox\@ne\unskip\global\setbox\@ne\lastbox}%
+        \setbox\tw@\hbox{$\kern\wd\@ne\kern-\@tempdima
+            \left\kernel@bordmatrix@left\kern-\wd\@ne
+            \global\setbox\@ne\vbox{\box\@ne\kern2\p@}%
+            \vcenter{\kern-\ht\@ne\unvbox\z@\kern-\baselineskip}
+            \,\right\kernel@bordmatrix@right$%
+            }%
+        \null\;\vbox{\kern\ht\@ne\box\tw@}%
+        \@nameuse{boredematrix@end@hook}%
+    \endgroup
+    }
 \def\set@bordermatrix@braces#1#2{%
-    \def\kernel@bordmatrix@left{#1}%
-    \def\kernel@bordmatrix@right{#2}%
+    \let\kernel@bordmatrix@left#1\relax
+    \let\kernel@bordmatrix@right#2\relax
+    \kernel@bordermatrix
     }
 \def\bordermatrix#1#{%
     \ifx\relax#1\relax
+        \expandafter\kernel@bordermatrix
     \else
-      \set@bordermatrix@braces #1\empty\empty%
-    \fi
-    \kernel@bordermatrix
+        \expandafter\set@bordermatrix@braces
+    \fi#1%
     }
-\let\amsmath@bordermatrix\bordermatrix
-
-\def\kernel@bordermatrix#1{{%
-  \csuse{pre@bordermatrix@hook}%
-  \left\kernel@bordmatrix@left
-  \env@matrix
-  #1%
-  \endmatrix    
-  \right\kernel@bordmatrix@right
-  \csuse{post@bordermatrix@hook}%
-  }}
-
 
 \AtBeginDocument{%
   \def\tfrac#1#2{{\textstyle\frac{#1}{#2}}}%
@@ -837,12 +854,16 @@
 \renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
           {\medskipamount}%
           {-1em}%
-          {\normalsize\itshape}}
+          {\paragraph@style}}
 
 \renewcommand\subparagraph{\@startsection{subparagraph}{5}{\z@}%
              {\smallskipamount}%
              {-1em}%
-             {\normalsize\itshape}}
+             {\subparagraph@style}}
+             
+\def\paragraph@style{\normalfont\itshape}
+\def\subparagraph@style{\normalfont\itshape}
+             
 % Format for the counter:
 \def\@seccntformat#1{\expandafter\upshape{\csname the#1\endcsname}.\enspace}
 
@@ -1236,11 +1257,6 @@
        \if\relax\NAT@date\relax\else\NAT@@close\fi\fi}{#1}{#2}}
 	\let\@citex\NAT@citex
 \fi
-
-
-\DeclareRobustCommand\surl[1]{#1}
-\DeclareRobustCommand\doiurl[1]{#1}
-\DeclareRobustCommand\arxivurl[1]{#1}
 
 \ifdefined\bvolume
 \else

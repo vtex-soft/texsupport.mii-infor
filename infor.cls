@@ -16,7 +16,7 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2020/05/26 v0.07.00 Informatica Journal class]
+\ProvidesClass{infor}[2020/06/02 v0.07.01 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
@@ -871,11 +871,36 @@
 %% caption
 \RequirePackage{caption}
 \captionsetup{margin=0pt,font=footnotesize,labelsep=period,skip=11pt}
-\captionsetup[table]{position=top,justification=centering,skip=4pt} 
+\captionsetup[table]{skip=4pt,labelsep=newline} 
 \def\table@caption@setup{%
   \captionwidth=\tablewidth 
-  \def\caption@lsep{\\}
   }
+
+\renewcommand\caption@slc[4]{%
+  \caption@Debug{Begin SLC}%
+  \singlelinecaptiontrue
+  \begingroup
+  \caption@singleline
+  \long\def\@caption@label@neline{\\}%
+  \let\caption@hj\@empty
+  \caption@calcmargin % calculate \captionwidth
+  \caption@prepareslc
+  %% fixed bug: when labelsep=newline don't take label name into account
+  \ifx\@caption@label@neline\caption@lsep
+    \sbox\@tempboxa{\caption@@@make{}{#2}}%
+  \else
+    \sbox\@tempboxa{\caption@@@make{#1}{#2}}%
+  \fi  
+  \ifdim\wd\@tempboxa>\captionwidth
+    \endgroup
+    \singlelinecaptionfalse
+    #4%
+  \else
+    \endgroup
+    #3%
+  \fi
+  \caption@Debug{End SLC}}
+
 \appto\caption@beginhook{\csuse{\@captype @caption@setup}}
 
 \renewcommand\figurename{Fig.}
@@ -2349,22 +2374,10 @@
 
 %%%%%%%%%%%%%%% CONTCAPTION 
 
-\newif\if@contcaption
-
 \def\contcaptionbraces#1#2{\gdef\contcaptionbraces@left{#1}\gdef\contcaptionbraces@right{#2}}
 \contcaptionbraces()
 
-\def\contcaption{\@contcaption\@captype}
-
-\long\def\@contcaption#1#2{%
-  \par
-  \begingroup
-    \@parboxrestore
-    \if@minipage\@setminipage\fi
-    \@contcaptiontrue
-    \normalsize\@makecaption{\csname fnum@#1\endcsname}{\ignorespaces\contcaptionbraces@left\textit{#2}\contcaptionbraces@right}\par
-  \endgroup
-  }
+\def\contcaption#1{\ContinuedFloat\caption{\contcaptionbraces@left\textit{#1}\contcaptionbraces@right}}
 
 \def\continued#1{\rightline{(\textit{#1})}}
 

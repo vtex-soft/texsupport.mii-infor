@@ -16,7 +16,7 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2020/06/02 v0.07.01 Informatica Journal class]
+\ProvidesClass{infor}[2020/06/03 v0.08.01 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
@@ -871,7 +871,7 @@
 %% caption
 \RequirePackage{caption}
 \captionsetup{margin=0pt,font=footnotesize,labelsep=period,skip=11pt}
-\captionsetup[table]{skip=4pt,labelsep=newline} 
+\captionsetup[table]{position=top,justification=centering,skip=4pt,labelsep=newline} 
 \def\table@caption@setup{%
   \captionwidth=\tablewidth 
   }

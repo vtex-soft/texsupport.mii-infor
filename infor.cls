@@ -16,7 +16,7 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2020/06/03 v0.08.01 Informatica Journal class]
+\ProvidesClass{infor}[2020/09/17 v0.09.01 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
@@ -817,7 +817,7 @@
 \def\copyright@signa{{\copyrfa\char'323}}
 \def\rtitleheadline{%
   \footnotesize \@JOURNAL, \@pubyear,\ Vol. \@volume, No. \@issue, \@ppages
-  \hfill {\normalsize\thepage}\break
+  \hfill {\small \thepage}\break
   \copyright@sign\ \@pubyear\ \textit{\@publisher}\hfill\break
   \print@doi
   }
@@ -1497,20 +1497,28 @@
     \let\thankstext\@gobble
     %\let\ead\@undefined
     \def\ead##1##{\@gobble}%
-    \def\inits##1{##1}%
+    \def\inits##1{\def\@inits{##1}\@inits}%
     \let\fnms\@gobble
   }
 \def\runauthor@etal{\space et al.}
+\def\runauthor@author@output#1{{%
+  \csuse{#1}%
+  \@ifundefined{@inits}{\def\@inits{}}{}%
+  \ifx\@inits\empty
+    \@latex@error{missing \string\inits\space for headline #1, use \string\inits{} or reassign it with \string\runauthor!.}{}%
+  \fi
+  }}
+
 \def\prepare@runauthor{%
   \ifx\@runauthor\empty
     \ifnum\c@author>0\relax
       \ifnum\c@author>2\relax
-          \gdef\@runauthor{{\runauthor@cmds \csuse{author1}\runauthor@etal}}%
+          \gdef\@runauthor{{\runauthor@cmds \runauthor@author@output{author1}\runauthor@etal}}%
       \else
         \ifnum\c@author=1\relax
-          \gdef\@runauthor{{\runauthor@cmds \csuse{author1}}}%
+          \gdef\@runauthor{{\runauthor@cmds \runauthor@author@output{author1}}}%
         \else
-          \gdef\@runauthor{{\runauthor@cmds \csuse{author1}\runauthor@sep\csuse{author2}}}%
+          \gdef\@runauthor{{\runauthor@cmds \runauthor@author@output{author1}\runauthor@sep \runauthor@author@output{author2}}}%
         \fi
       \fi
     \fi

@@ -1371,7 +1371,7 @@
     \infor@startsection{#1}{#2}{#3}{#4}{#5}{#6}%
     }%
   \gdef\Sectionformat#1#2{%
-    \infor@Sectionformat{#1\@nameuse{infor@section@level@\infor@section@numlevel @sep}}{#2}%
+    {#1\@nameuse{infor@section@level@\infor@section@numlevel @sep}}%
     }%
   }
 

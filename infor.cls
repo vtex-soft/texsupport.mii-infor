@@ -16,7 +16,7 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2020/09/17 v0.09.01 Informatica Journal class]
+\ProvidesClass{infor}[2021/02/18 v0.10.01 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
@@ -874,6 +874,7 @@
 \captionsetup[table]{position=top,justification=centering,skip=4pt,labelsep=newline} 
 \def\table@caption@setup{%
   \captionwidth=\tablewidth 
+  \def\captionnewline{\par}%
   }
 
 \renewcommand\caption@slc[4]{%
@@ -881,12 +882,12 @@
   \singlelinecaptiontrue
   \begingroup
   \caption@singleline
-  \long\def\@caption@label@neline{\\}%
+  \long\def\@caption@label@newline{\\}%
   \let\caption@hj\@empty
   \caption@calcmargin % calculate \captionwidth
   \caption@prepareslc
   %% fixed bug: when labelsep=newline don't take label name into account
-  \ifx\@caption@label@neline\caption@lsep
+  \ifx\@caption@label@newline\caption@lsep
     \sbox\@tempboxa{\caption@@@make{}{#2}}%
   \else
     \sbox\@tempboxa{\caption@@@make{#1}{#2}}%
@@ -1355,6 +1356,7 @@
     }%
   }
 
+\RequirePackage{afterpackage}
 \@namedef{infor@section@level@1@sep}{}
 \@namedef{infor@section@level@2@sep}{}
 \@namedef{infor@section@level@3@sep}{}
@@ -1362,19 +1364,24 @@
 \@namedef{infor@section@level@5@sep}{.}
 \def\infor@section@numlevel{0}
 \def\infor@section@namelevel{undef}
-\AtBeginDocument{%
+
+\def\setup@Sectionformat{%
   \global\let\infor@Sectionformat\Sectionformat
   \global\let\infor@startsection\@startsection
-  \def\@startsection#1#2#3#4#5#6{%
-    \xdef\infor@section@namelevel{#1}%
-    \xdef\infor@section@numlevel{#2}%
-    \infor@startsection{#1}{#2}{#3}{#4}{#5}{#6}%
+  \def\@startsection##1##2##3##4##5##6{%
+    \xdef\infor@section@namelevel{##1}%
+    \xdef\infor@section@numlevel{##2}%
+    \infor@startsection{##1}{##2}{##3}{##4}{##5}{##6}%
     }%
-  \gdef\Sectionformat#1#2{%
-    \infor@Sectionformat{#1\@nameuse{infor@section@level@\infor@section@numlevel @sep}}{#2}%
+  \gdef\Sectionformat##1##2{%
+    \infor@Sectionformat{##1\@nameuse{infor@section@level@\infor@section@numlevel @sep}}{##2}%
     }%
   }
-
+  
+\AfterPackage{nameref}{%
+  \setup@Sectionformat
+  }
+  
 %% >>> index >>>
 \usepackage{index}
 \newindex{default}{idx}{ind}{Raw Index}

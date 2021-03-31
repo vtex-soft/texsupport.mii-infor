@@ -16,7 +16,7 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2021/02/18 v0.10.01 Informatica Journal class]
+\ProvidesClass{infor}[2021/03/31 v0.11.01 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
@@ -52,9 +52,7 @@
 %************************* FONTS
 \renewcommand{\ttdefault}{pcr}
 \normalfont\normalsize
-\renewcommand\sldefault{it}
 \renewcommand\bfdefault{b}
-\let\slshape\itshape
 
 \def\@xivpt{14}
 \def\@xviipt{17}

@@ -16,7 +16,7 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2021/03/31 v0.11.01 Informatica Journal class]
+\ProvidesClass{infor}[2022/10/24 v0.12.01 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
@@ -870,35 +870,68 @@
 \RequirePackage{caption}
 \captionsetup{margin=0pt,font=footnotesize,labelsep=period,skip=11pt}
 \captionsetup[table]{position=top,justification=centering,skip=4pt,labelsep=newline} 
-\def\table@caption@setup{%
-  \captionwidth=\tablewidth 
-  \def\captionnewline{\par}%
-  }
+\@ifundefined{captionwidth}{
+    \def\table@caption@setup{%
+      \caption@width=\tablewidth 
+      \def\captionnewline{\par}%
+      }
 
-\renewcommand\caption@slc[4]{%
-  \caption@Debug{Begin SLC}%
-  \singlelinecaptiontrue
-  \begingroup
-  \caption@singleline
-  \long\def\@caption@label@newline{\\}%
-  \let\caption@hj\@empty
-  \caption@calcmargin % calculate \captionwidth
-  \caption@prepareslc
-  %% fixed bug: when labelsep=newline don't take label name into account
-  \ifx\@caption@label@newline\caption@lsep
-    \sbox\@tempboxa{\caption@@@make{}{#2}}%
-  \else
-    \sbox\@tempboxa{\caption@@@make{#1}{#2}}%
-  \fi  
-  \ifdim\wd\@tempboxa>\captionwidth
-    \endgroup
-    \singlelinecaptionfalse
-    #4%
-  \else
-    \endgroup
-    #3%
-  \fi
-  \caption@Debug{End SLC}}
+    \renewcommand\caption@slc[4]{%
+      \caption@Debug{Begin SLC}%
+      \singlelinecaptiontrue
+      \begingroup
+      \caption@singleline
+      \long\def\@caption@label@newline{\\}%
+      \let\caption@hj\@empty
+      \caption@calcmargin % calculate \caption@width
+      \caption@prepareslc
+      %% fixed bug: when labelsep=newline don't take label name into account
+      \ifx\@caption@label@newline\caption@lsep
+        \sbox\@tempboxa{\caption@@@make{}{#2}}%
+      \else
+        \sbox\@tempboxa{\caption@@@make{#1}{#2}}%
+      \fi  
+      \ifdim\wd\@tempboxa>\caption@width
+        \endgroup
+        \singlelinecaptionfalse
+        #4%
+      \else
+        \endgroup
+        #3%
+      \fi
+      \caption@Debug{End SLC}}
+}{
+    \def\table@caption@setup{%
+      \captionwidth=\tablewidth 
+      \def\captionnewline{\par}%
+      }
+
+    \renewcommand\caption@slc[4]{%
+      \caption@Debug{Begin SLC}%
+      \singlelinecaptiontrue
+      \begingroup
+      \caption@singleline
+      \long\def\@caption@label@newline{\\}%
+      \let\caption@hj\@empty
+      \caption@calcmargin % calculate \captionwidth
+      \caption@prepareslc
+      %% fixed bug: when labelsep=newline don't take label name into account
+      \ifx\@caption@label@newline\caption@lsep
+        \sbox\@tempboxa{\caption@@@make{}{#2}}%
+      \else
+        \sbox\@tempboxa{\caption@@@make{#1}{#2}}%
+      \fi  
+      \ifdim\wd\@tempboxa>\captionwidth
+        \endgroup
+        \singlelinecaptionfalse
+        #4%
+      \else
+        \endgroup
+        #3%
+      \fi
+      \caption@Debug{End SLC}}
+}
+
 
 \appto\caption@beginhook{\csuse{\@captype @caption@setup}}
 

@@ -16,7 +16,7 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2022/10/24 v0.12.01 Informatica Journal class]
+\ProvidesClass{infor}[2022/12/07 v0.15.01 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
@@ -251,10 +251,13 @@
 \thm@headsep=5em
 \let\thm@head@dot@font\empty
 
+\def\thm@note@brace@L{{\rm (}}
+\def\thm@note@brace@R{{\rm )}}
+
 \def\thmhead@plain #1#2#3{%
   \thmname {#1}%
   \thmnumber {\@ifnotempty {#1}{ }\@upn {#2}}%
-  \thmnote { {\gdef\thm@head@dot@font{\rm}\the \thm@notefont {\rm (}#3{\rm )}}}%
+  \thmnote { {\gdef\thm@head@dot@font{\rm}\the \thm@notefont \thm@note@brace@L#3\thm@note@brace@R}}%
   }
 
 \def\normal@cite@font{%
@@ -282,7 +285,7 @@
   {\itshape\thm@notefont={\normalfont\mathversion{normal}}}% Body font / thm style overriding
   {}                           % Indent amount
   {\bfseries\mathversion{bold}}% Theorem head font
-  {{\thm@head@dot@font .}\global\let\thm@head@dot@font\empty }                          % Punctuation after theorem head
+  {{\thm@head@dot@font .}\global\let\thm@head@dot@font\empty }% Punctuation after theorem head
   {.5em}                       % Space after theorem head
   {}                           % Theorem head (thmhead) spec
 
@@ -931,7 +934,6 @@
       \fi
       \caption@Debug{End SLC}}
 }
-
 
 \appto\caption@beginhook{\csuse{\@captype @caption@setup}}
 
@@ -1847,9 +1849,13 @@
 
 \newcounter{correspnote}
 \def\corresp@note@counter{correspnote}
+
 \newcounter{titlenote}
 \def\title@note@counter{titlenote}
 \def\subtitle@note@counter{titlenote}
+\def\relatedarticle@note@counter{titlenote}
+\def\correctionnote@note@counter{titlenote}
+
 \newcounter{authornote}
 \def\author@note@counter{authornote}
 \def\theauthornote{\arabic{authornote}}%
@@ -1866,9 +1872,11 @@
 \def\thetitlenote{%
   \ifcase\c@titlenote\relax
   \or
-    \ding{73}%
+    \protect\ding{73}%
   \or
-    \ding{73}\ding{73}%
+    \protect\ding{73}\protect\ding{73}%
+  \or
+    \protect\ding{73}\protect\ding{73}\protect\ding{73}%
   \fi
   }%
 \let\thesubtitlenote\thetitlenote
@@ -1999,7 +2007,7 @@
     \setcounter{footnote}{\the\csname c@\current@counter\endcsname}%
     \def\thefootnote{\csname the\current@counter\endcsname}%
     \@@@Label{\thankstext@id}%
-    \thankstext@fmt{\thefootnote}{#2}%
+    \thankstext@fmt{\thefootnote}{\csname \thankstext@type @prehook\endcsname #2\csname \thankstext@type @posthook\endcsname}%
   }
 \define@key{addthanks}{id}{\def\addthanks@id{#1}}
 \define@key{addthanks}{mark}{\def\addthanks@mark{#1}}
@@ -2362,13 +2370,6 @@
 \def\funding{\Env@EndOfContrib\fundingname}
 \let\endfunding\endEnv@EndOfContrib
 %% <<< Funding <<<
-
-%% >>> LaTeX quality checker configuration >>>
-\protected@write\@auxout{}{\string\vktinfo{kt-ltx-chk}{cmn}{cmn_info_all}}
-\protected@write\@auxout{}{\string\vktinfo{kt-ltx-chk}{cmn}{cmn_vln_all}}
-\protected@write\@auxout{}{\string\vktinfo{kt-ltx-chk}{cmn}{cmn_vln_ext}}
-\let\vktinfo\@gobblethree
-%% <<< LaTeX quality checker configuration <<<
 
 \newenvironment{backmatter}{\goodbreak\ignorespaces}{}
 

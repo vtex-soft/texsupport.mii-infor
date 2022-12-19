@@ -16,7 +16,7 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2022/12/07 v0.15.01 Informatica Journal class]
+\ProvidesClass{infor}[2022/12/18 v0.15.02 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
@@ -1855,6 +1855,8 @@
 \def\subtitle@note@counter{titlenote}
 \def\relatedarticle@note@counter{titlenote}
 \def\correctionnote@note@counter{titlenote}
+\def\correctedarticle@note@counter{titlenote}
+\def\commentaryarticle@note@counter{titlenote}
 
 \newcounter{authornote}
 \def\author@note@counter{authornote}

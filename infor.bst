@@ -362,26 +362,17 @@ FUNCTION {format.pub.address}
         }
       if$
     }
-    { address empty$
-        {publisher empty$
-            {howpublished} 
-            {publisher} 
-         if$ 
-         "publisher" make.tag
-         #1 bother =
-            {", \blocation{???}" *  }
-          'skip$
-         if$
-         output   
-        }
-        {publisher empty$
-            {howpublished } 
-            {publisher } 
-         if$ 
-          "publisher" make.tag output
-          insert.comma
-          address "location" make.tag output
-        }
+    { 
+      publisher empty$
+          {howpublished} 
+          {publisher} 
+      if$ 
+      "publisher" make.tag 
+      output
+    
+      address empty$
+        'skip$
+        { insert.comma address "location" make.tag output}
       if$
     }
   if$
@@ -2467,7 +2458,7 @@ SORT
 
 FUNCTION {write.preambule}
 {   "\begin{thebibliography}{" number.label int.to.str$ * "}" * write$ newline$
-  "% BibTex style file: infor.bst, 2020-04-06" write$ newline$
+  "% BibTex style file: infor.bst, 2023-05-24" write$ newline$
   "\ifx \bisbn   \undefined \def \bisbn  #1{ISBN #1}\fi" write$ newline$
   "\ifx \binits  \undefined \def \binits#1{#1} \fi" write$ newline$
   "\ifx \bauthor  \undefined \def \bauthor#1{#1} \fi" write$ newline$

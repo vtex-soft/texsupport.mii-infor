@@ -16,14 +16,25 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2022/12/18 v0.15.02 Informatica Journal class]
+\ProvidesClass{infor}[2024/08/12 v0.15.03 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
 
+\newif\if@rotating@loaded \@rotating@loadedfalse
+\DeclareOption{rotating}{\@rotating@loadedtrue}
+
 \PassOptionsToClass{twoside,fleqn}{article}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions*
+
+%%% OTRS#142065 - big {sidewaystable} with {htpicture} in tex4ht make incomplete
+\if@rotating@loaded
+  \ifdefined\FinalHTPictureRun
+    \PassOptionsToPackage{figuresright}{rotating}
+  \fi
+  \AtEndOfClass{\RequirePackage{rotating}}
+\fi
 
 % Customization of fonts
 \RequirePackage{tgheros}
@@ -380,7 +391,6 @@
 \setlength\evensidemargin  {25mm}
 \setlength\topmargin       {36pt}
 
-\RequirePackage{rotating}
 \RequirePackage{graphicx}
 \RequirePackage{array}
 

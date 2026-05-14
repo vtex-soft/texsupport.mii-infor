@@ -16,7 +16,7 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2024/08/12 v0.15.03 Informatica Journal class]
+\ProvidesClass{infor}[2026/05/14 v0.16.06 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
@@ -435,21 +435,24 @@
 
 \newcommand\abstract@fmt[1]{\textbf{#1\abstract@name@skip}}
 \newcommand\abstract@name{Abstract}
-\newcommand\abstract@name@skip{.\space}
+\newcommand\abstract@name@skip{{\csuse{vtxml@suppress@output}.\space}}
 \newbox\absbox
 \renewenvironment{abstract}
   {%
     \global\setbox\absbox=\vbox\bgroup
     \hsize=\textwidth\def\baselinestretch{1}%
     \small
-    \noindent\unskip\abstract@fmt{\abstract@name}%
+    \noindent\unskip
+    \csuse{vtxml@abstractname@start}%
+    \abstract@fmt{\abstract@name}%
+    \csuse{vtxml@abstractname@stop}%
     \ignorespaces
   }{%
     \par
     \egroup
   }
 
-\def\keywords@prefixsep{:\space}
+\def\keywords@prefixsep{{\csuse{vtxml@suppress@output}:\space}}
 \newcount\keyboxcnt
 \newenvironment{keywords}[1][]%
   {%
@@ -499,17 +502,22 @@
         \prevdepth\z@
         \vskip2pt
       \fi
-      \noindent{\keywords@prefix}%
+      \noindent
+      \csuse{vtxml@keyword@start}%
+      \csuse{vtxml@keywordsname@start}%
+      {\keywords@prefix}%
+      \csuse{vtxml@keywordsname@stop}%
       \raggedright % Keywords are not justified.
       \ignorespaces
   }{%
-      .\par
+      \csuse{vtxml@keyword@stop}%
+      {\csuse{vtxml@suppress@output}.}\par
     \egroup
     \gdef\first@keyword@env{1}%
   }
 
 \newif\if@firstkwd
-\def\kwd@sep{\unskip, }%
+\def\kwd@sep{{\csuse{vtxml@suppress@output}\unskip, }}
 \def\msc@hrefprefix{http://www.ams.org/msc/msc2010.html?s=}
 \newcommand\kwd[2][]{%
   \bgroup
@@ -523,11 +531,13 @@
     \else
       \@tempa
     \fi
+    \csuse{vtxml@key@start}%
     \ifdefined\MSC@active@keywords
       \href{\msc@hrefprefix #2}{#2}%
     \else
       #2%
     \fi
+    \csuse{vtxml@key@stop}%
   \egroup
   \ignorespaces
   }
@@ -554,12 +564,16 @@
   }
 
 \def\output@frontmatter@authors{%
+  \@tempcnta=\z@
   \def\do##1{%
-    \author@fmt{\the\c@author}{\csuse{##1t@loc@notes}}{\author@sep\csuse{##1}}%
-    \def\author@sep{\unskip,\space}%
+    \advance\@tempcnta\@ne
+    \expandafter\author@fmt\expandafter{\the\@tempcnta}{\csuse{##1t@loc@notes}}{\author@sep\csuse{##1}}%
+    \def\author@sep{\unskip{\csuse{vtxml@suppress@output},\space}}%
     }%
+  \csuse{vtxml@aug@start}%
   \front@author@defs 
   \expandafter\docsvlist\expandafter{\author@list}%
+  \csuse{vtxml@aug@stop}%
   \par
   }
 
@@ -636,10 +650,14 @@
     \def\baselinestretch{1}%
     \null
     \vskip\title@preskip
+    \csuse{vtxml@title@start}%
     \title@fmt{\@title}{\csuse{title@t@loc@notes}}%
+    \csuse{vtxml@title@stop}%
     \vskip\title@afterskip
     \ifdefined\@subtitle
+      \csuse{vtxml@subtitle@start}%
       \subtitle@fmt{\@subtitle}{\csuse{subtitle@t@loc@notes}}%
+      \csuse{vtxml@subtitle@stop}%
       \par
       \vskip\subtitle@afterskip
     \fi
@@ -664,13 +682,17 @@
   \vskip11pt
   \ifdefined\@dedicated
     \unskip\vskip9.5pt
+    \csuse{vtxml@dedicated@start}%
     \dedicated@fmt{\@dedicated}%
+    \csuse{vtxml@dedicated@stop}%
     \par\vskip15pt
   \fi
   \ifvoid\absbox
   \else
     \vskip7pt
-    \unvbox\absbox
+      \csuse{vtxml@abstract@start}%
+      \unvbox\absbox
+      \csuse{vtxml@abstract@stop}%
     \par
     \vskip6pt
   \fi
@@ -1017,6 +1039,7 @@
   {%
     \global\@firstauthortrue
     \let\saved@thefootnote\thefootnote
+    \csuse{vtxml@frontmatter@start}%
   }{%
     \do@pdfmeta@authors
     \maketitle
@@ -1028,6 +1051,7 @@
             \ClassError{\fmt@name}{At least one email address is required!}{}%
         \fi
     \fi
+    \csuse{vtxml@frontmatter@stop}%
     \par
     \ifhmode\unskip\fi
     \vskip\endfrontmater@skip
@@ -1525,7 +1549,7 @@
 \newif\if@newelem
 \let\cmd@for@aut@elem\@gobblethree
 \let\mdforvkt\@gobblethree
-\let\orcid\@gobble
+\def\orcid#1{\def\@orcid{#1}\csuse{vtxml@orcid@output}}
 
 \def\runtitle#1{\gdef\@runtitle{#1}}                      
 \def\@runtitle{}
@@ -1582,18 +1606,18 @@
     {\author@optarg[]}%
   }
   
-\protected\def\fmt@snm#1{\uppercase{#1}}
-\protected\def\fmt@fnms#1{#1}
+\protected\def\fmt@snm#1{{\csuse{vtxml@suppress@output}\uppercase{#1}}\csuse{vtxml@snm@output}}
+\protected\def\fmt@fnms#1{\csuse{vtxml@fnms@start}#1\csuse{vtxml@fnms@stop}}
 \let\write@aux@au\@gobbletwo
 \protected\def\@write@aux@au#1#2{%
   \protect\protected@write\@auxout{}{\string\global\string\@namedef{#1@\the\c@author @metadata}{#2}}%
   }
-\protected\def\inforbio#1{\csxdef{dg@bio@#1@label}{1}}
+\protected\def\inforbio#1{\def\@inforbio{#1}\csxdef{dg@bio@#1@label}{1}\csuse{vtxml@bio@output}}
 
 \def\front@author@defs{%
   \let\bio\inforbio
   \let\write@aux@au\@write@aux@au
-  \protected\def\degs##1{##1}%
+  \protected\def\degs##1{\csuse{vtxml@degs@start}##1\csuse{vtxml@degs@stop}}%
   \protected\def\prefix##1{%
     \write@aux@au{prefix}{##1}%
     \fmt@prefix{##1}%
@@ -1602,19 +1626,21 @@
   \protected\def\inits##1{%
     \csdef{@inits}{##1}%
     \write@aux@au{inits}{##1}%
+    \csuse{vtxml@inits@output}%
     }%
   \protected\def\snm##1{%
     \csdef{@snm}{##1}%
     \write@aux@au{snm}{##1}%
     \fmt@snm{##1}%
     }%
-  \protected\def\suffix##1{##1}%
-  \protected\def\roles##1{##1}%
+  \protected\def\suffix##1{\csuse{vtxml@suffix@start}##1\csuse{vtxml@suffix@stop}}%
+  \protected\def\roles##1{\csuse{vtxml@roles@start}##1\csuse{vtxml@roles@stop}}%
   }
 
 \def\author@optarg[#1]#2{%
   \stepcounter{author}%
   \beg@elem
+  \gdef\vtxml@addressrefs{}%  
   \@for\@tempa:=#1\do{\expandafter\add@addressref\expandafter{\@tempa}}%
   \let\oldunderscore\_%
   \let\_\textunderscore
@@ -1623,6 +1649,8 @@
   \temptoks=\expandafter{\@author}%
   \csxdef{author\the\c@author}{\expandonce{\the\temptoks}}%
   \protected\csxdef{author\the\c@author t@loc@notes}{\the\t@loc@notes}%
+  \csxdef{author\the\c@author @addrrefs}{\vtxml@addressrefs}%
+  \csxdef{author\the\c@author @thanksrefs}{\vtxml@thanksrefs}%
   \@ifundefined{author@list}
     {%
       \xdef\author@list{author\the\c@author}%
@@ -1655,20 +1683,24 @@
     }%
   }
 
+\def\fmt@author@notes#1{{\csuse{vtxml@suppress@output}\fm@textsuperscript{#1}}}
 \newtoks\temptoks
 \def\author@fmt#1#2#3{%
   \ifdefined\author@fmt@init@done
   \else
     \author@fmt@init
   \fi
+  \def\author@num{#1}%
+  \csuse{vtxml@author@start}%
   \edef\@tempb{#2}%
   \ifx\@tempb\@empty
     #3%
   \else
     %% no need links on author marks
     \let\hyper@@link\@gobbletwo
-    #3\fm@textsuperscript{#2}%
+    #3\fmt@author@notes{#2}%
   \fi
+  \csuse{vtxml@author@stop}%
   }
 \def\fm@textsuperscript#1{%
   \unskip\textsuperscript{{\normalfont #1}}%
@@ -1695,11 +1727,14 @@
   \fi
   }
 
+\def\vtxml@addressrefs{}  
 \def\add@addressref#1{%
   \global\advance\note@cnt\@ne
   \ifnum\note@cnt>\@ne
     \add@xtok\t@loc@notes{\note@sep}%
+    \expandafter\def\expandafter\vtxml@addressrefs\expandafter{\vtxml@addressrefs ,}%
   \fi
+  \expandafter\def\expandafter\vtxml@addressrefs\expandafter{\vtxml@addressrefs addr#1}%
   \add@tok\t@loc@notes{\ref{aff.#1}}%
   }
 \def\note@sep{,}
@@ -1760,6 +1795,7 @@
   }
 
 \def\theaddress{\the\c@address}
+\def\format@address@label#1{{\csuse{vtxml@addrlabel@set}\fm@textsuperscript{#1}\,}}
 
 \def\address@fmt#1#2#3{%
   \ifdefined\address@fmt@init@done
@@ -1770,15 +1806,18 @@
     \def\baselinestretch{1}%
     \address@font
     {\baselineskip=0pt\par}% add paragraph without aditional line skip
-    \def\\{\linebreak}%  
+    \def\\{\linebreak}%
+    \edef\vtxml@addr@id{#1}%
+    \csuse{vtxml@address@start}%      
     \ifnum#1=\z@
     \else
-      \setbox\@tempboxa\hbox{\fm@textsuperscript{#1}\,}%
+      \setbox\@tempboxa\hbox{\format@address@label{#1}}%
       \parshape 2 0pt \textwidth % firs line of address not indented
                   \wd\@tempboxa \the\dimexpr\textwidth -\wd\@tempboxa\relax % rest of the lines indented by the width of mark
       \unhbox\@tempboxa 
     \fi
     #3\fm@textsuperscript{#2}%
+    \csuse{vtxml@address@stop}%      
     \par
   \egroup
   }
@@ -1791,6 +1830,7 @@
 
 %% >>> \beg@elem, \proc@elem (based on iosart2x.cls) >>>
 \def\beg@elem{%
+  \gdef\vtxml@thanksrefs{}%  
   \global\t@loc@notes={}%
   \global\note@cnt\z@
   }
@@ -1841,7 +1881,8 @@
 \chardef\e@subtitle=1
 \chardef\e@author=2
 \chardef\e@address=3
-
+\def\vtxml@thanksrefs{}  
+  
 \newif\if@thankshyperlink \global\@thankshyperlinkfalse
 
 \def\add@tok#1#2{%
@@ -2019,7 +2060,7 @@
     \setcounter{footnote}{\the\csname c@\current@counter\endcsname}%
     \def\thefootnote{\csname the\current@counter\endcsname}%
     \@@@Label{\thankstext@id}%
-    \thankstext@fmt{\thefootnote}{\csname \thankstext@type @prehook\endcsname #2\csname \thankstext@type @posthook\endcsname}%
+    \thankstext@fmt{\thefootnote}{\csuse{vtxml@thankstext@prehook}\csname \thankstext@type @prehook\endcsname #2\csname \thankstext@type @posthook\endcsname}%
   }
 \define@key{addthanks}{id}{\def\addthanks@id{#1}}
 \define@key{addthanks}{mark}{\def\addthanks@mark{#1}}
@@ -2036,6 +2077,11 @@
   \ifnum\note@cnt>\@ne
     \add@xtok\t@loc@notes{\note@sep}%
   \fi
+  \ifx\vtxml@thanksrefs\empty
+  \else
+    \edef\vtxml@thanksrefs{\vtxml@thanksrefs ,}%
+  \fi
+  \edef\vtxml@thanksrefs{\vtxml@thanksrefs \addthanks@id}%
   \if@thankshyperlink %% TODO: make active links
     \ifx\addthanks@id\@empty
       \add@xtok\t@loc@notes{\protect\Hy@breaklinkstrue
@@ -2081,14 +2127,15 @@
   \beg@elem
   \init@fm@element{title}{#1}%
   \gdef\@runtitle{#1}%
-  \protected\csxdef{title@t@loc@notes}{\the\t@loc@notes}%
+  \protected\xdef\title@t@loc@notes{\the\t@loc@notes}%
+  \xdef\title@thanksrefs{\vtxml@thanksrefs}% \vtxml@thanksrefs build by \thanksref
   \csname title@end@hook\endcsname
   }
 \def\title@fmt#1#2{%
   \bgroup
     \nohyphen\raggedright
     \title@font
-    #1{\hbox{\title@textsuperscript{#2}}}%
+    #1{\csuse{vtxml@suppress@output}\hbox{\title@textsuperscript{#2}}}%
     \par
   \egroup
   }
@@ -2096,14 +2143,15 @@
 \def\subtitle#1{%
   \beg@elem
   \init@fm@element{subtitle}{#1}%
-  \protected\csxdef{subtitle@t@loc@notes}{\the\t@loc@notes}%
+  \protected\xdef\subtitle@t@loc@notes{\the\t@loc@notes}%
+  \xdef\subtitle@thanksrefs{\vtxml@thanksrefs}% \vtxml@thanksrefs build by \thanksref
   \csname subtitle@end@hook\endcsname
   }
 \def\subtitle@fmt#1#2{%
   \bgroup
     \nohyphen\raggedright
     \subtitle@font
-    #1\hbox{\title@textsuperscript{#2}}%
+    #1{\csuse{vtxml@suppress@output}\hbox{\title@textsuperscript{#2}}}%
   \egroup
   }
 
@@ -2129,18 +2177,17 @@
     }
     
 \def\ead@hrefprefix@email{mailto:}
+\def\@setead#1#2#3{%
+  \bgroup
+    \csname @setead@hook\endcsname
+    \expandafter\xdef\csname ead@#1@#2\endcsname{#3}%
+  \egroup
+  }%
         
 \DeclareRobustCommand\ead[2][]{{%
 %% few necessary printead.sty definitions
   \define@key{ead}{label}{\def\ead@id{#1}}%
   \define@key{ead}{email}[true]{\def\ead@type{email}}%
-  \def\@setead##1##2##3{%
-    \bgroup
-      \csname @setead@hook\endcsname
-      \expandafter\xdef\csname ead@##1@##2\endcsname{##3}%
-    \egroup
-    }%
-  %
   \csname before@ead@hook\endcsname
   \setkeys{ead}{label={},email,#1}%
   \@setead{\ead@id}{options}{#1}%
@@ -2163,10 +2210,12 @@
 
 \def\output@frontmatter@emails{%
   \bgroup
+    
     \edef\emaillist{\the\email@author@toks}%
     \ifx\emaillist\empty
     \else
       \bgroup
+        \csuse{vtxml@suppress@output}%
         \email@font
         \email@prefix \the\email@author@toks
         \par
@@ -2228,27 +2277,32 @@
     ; \allowbreak
   \fi
   }
+  
+  
 \def\history@fmt{%
-  \history@prefix
-  \ifx\@empty\@received
-  \else
-    \leavevmode
-    \received@prefix\hbox{\@received}\received@postfix
-    \@historytrue
-    \ifx\@empty\@revised
+  \bgroup
+    \csuse{vtxml@suppress@output}%
+    \history@prefix
+    \ifx\@empty\@received
     \else
-      \history@sep
-      \revised@prefix\hbox{\@revised}\revised@postfix
-    \fi
-    \ifx\@empty\@accepted
-    \else
-      \history@sep
-      \accepted@prefix\hbox{\@accepted}\accepted@postfix
+      \leavevmode
+      \received@prefix\hbox{\@received}\received@postfix%%
       \@historytrue
+      \ifx\@empty\@revised
+      \else
+        \history@sep
+        \revised@prefix\hbox{\@revised}\revised@postfix
+      \fi
+      \ifx\@empty\@accepted
+      \else
+        \history@sep
+        \accepted@prefix\hbox{\@accepted}\accepted@postfix
+        \@historytrue
+      \fi
     \fi
-    % \output@publishedonline
-  \fi
-  \history@postfix
+    \history@postfix
+  \egroup
+  \csuse{vtxml@history@output}%
   }
 
 \def\history@skip{14pt}  
@@ -2260,11 +2314,11 @@
 
 %% <<< history <<<
 
-\let\cny\@firstofone
-\let\dept\@firstofone
-\let\institution\@firstofone
-\let\addr\@firstofone
-\let\city\@firstofone
+\protected\def\cny#1{\csuse{vtxml@cny@start}#1\csuse{vtxml@cny@stop}}
+\protected\def\dept#1{\csuse{vtxml@dept@start}#1\csuse{vtxml@dept@stop}}
+\protected\def\institution#1{\csuse{vtxml@institution@start}#1\csuse{vtxml@institution@stop}}
+\protected\def\addr#1{\csuse{vtxml@addr@start}#1\csuse{vtxml@addr@stop}}
+\protected\def\city#1{\csuse{vtxml@city@start}#1\csuse{vtxml@city@stop}}
 
 \def\dedicated#1{%
   \gdef\@dedicated{#1}%

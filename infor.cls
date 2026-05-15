@@ -2209,8 +2209,7 @@
 \def\email@font{\small\itshape}
 
 \def\output@frontmatter@emails{%
-  \bgroup
-    
+  \bgroup    
     \edef\emaillist{\the\email@author@toks}%
     \ifx\emaillist\empty
     \else

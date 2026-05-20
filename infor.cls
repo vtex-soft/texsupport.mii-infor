@@ -16,7 +16,7 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2026/05/14 v0.16.06 Informatica Journal class]
+\ProvidesClass{infor}[2026/05/20 v0.17.06 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
@@ -443,11 +443,13 @@
     \hsize=\textwidth\def\baselinestretch{1}%
     \small
     \noindent\unskip
+    \csuse{vtxml@abstract@start}%
     \csuse{vtxml@abstractname@start}%
     \abstract@fmt{\abstract@name}%
     \csuse{vtxml@abstractname@stop}%
     \ignorespaces
   }{%
+    \csuse{vtxml@abstract@stop}%
     \par
     \egroup
   }
@@ -565,15 +567,16 @@
 
 \def\output@frontmatter@authors{%
   \@tempcnta=\z@
-  \def\do##1{%
-    \advance\@tempcnta\@ne
-    \expandafter\author@fmt\expandafter{\the\@tempcnta}{\csuse{##1t@loc@notes}}{\author@sep\csuse{##1}}%
-    \def\author@sep{\unskip{\csuse{vtxml@suppress@output},\space}}%
-    }%
-  \csuse{vtxml@aug@start}%
-  \front@author@defs 
-  \expandafter\docsvlist\expandafter{\author@list}%
-  \csuse{vtxml@aug@stop}%
+  \ifnum\c@author>0
+    \def\do##1{%
+      \advance\@tempcnta\@ne
+      \expandafter\author@fmt\expandafter{\the\@tempcnta}{\csuse{##1t@loc@notes}}{\author@sep\csuse{##1}}%
+      \def\author@sep{\unskip{\csuse{vtxml@suppress@output},\space}}%
+      }%
+    \front@author@defs 
+    \expandafter\docsvlist\expandafter{\author@list}%
+    \csuse{vtxml@aug@stop}%
+  \fi
   \par
   }
 
@@ -667,7 +670,7 @@
       \par
       \vskip 1pt
       \def\do##1{%
-        \address@fmt{\csuse{##1@counter}}{\csuse{##1t@loc@notes}}{\csuse{##1}}%
+        \address@fmt{\csuse{##1@counter}}{\csuse{##1t@loc@notes}}{##1}%
         }%
       \expandafter\docsvlist\expandafter{\address@list}%
       \par
@@ -690,9 +693,7 @@
   \ifvoid\absbox
   \else
     \vskip7pt
-      \csuse{vtxml@abstract@start}%
       \unvbox\absbox
-      \csuse{vtxml@abstract@stop}%
     \par
     \vskip6pt
   \fi
@@ -1689,6 +1690,7 @@
   \ifdefined\author@fmt@init@done
   \else
     \author@fmt@init
+    \csuse{vtxml@aug@start}%
   \fi
   \def\author@num{#1}%
   \csuse{vtxml@author@start}%
@@ -1755,6 +1757,7 @@
   \beg@elem
   \init@fm@element{address}{#2}%
   \csxdef{address\the\c@address @counter}{\the\c@address}%
+  \csxdef{address\the\c@address @ref}{#1}%
   \temptoks=\expandafter{\@address}%
   \csxdef{address\the\c@address}{\the\temptoks}%
   \protected\csxdef{address\the\c@address t@loc@notes}{\the\t@loc@notes}%
@@ -1787,10 +1790,11 @@
   \ignorespaces
   }
 
+%% this looks unused  
 \def\address@star#1{%
   \beg@elem
   \init@fm@element{address}{#1}%
-  \address@fmt{\m@ne}{\the\t@loc@notes}{\@address}%
+  \address@fmt{\m@ne}{\the\t@loc@notes}{@address}%
   \ignorespaces
   }
 
@@ -1807,7 +1811,11 @@
     \address@font
     {\baselineskip=0pt\par}% add paragraph without aditional line skip
     \def\\{\linebreak}%
-    \edef\vtxml@addr@id{#1}%
+    \ifcsname #3@ref\endcsname
+        \edef\vtxml@addr@id{\lastnamedcs}%
+    \else
+        \edef\vtxml@addr@id{X}%
+    \fi
     \csuse{vtxml@address@start}%      
     \ifnum#1=\z@
     \else
@@ -1816,7 +1824,8 @@
                   \wd\@tempboxa \the\dimexpr\textwidth -\wd\@tempboxa\relax % rest of the lines indented by the width of mark
       \unhbox\@tempboxa 
     \fi
-    #3\fm@textsuperscript{#2}%
+    % #3 - author1,... or @author
+    \csuse{#3}\fm@textsuperscript{#2}%
     \csuse{vtxml@address@stop}%      
     \par
   \egroup
@@ -2440,12 +2449,13 @@
 
 \newenvironment{biography}{%
   \par\smallskip
+  \csuse{vtxml@bio@start}%
   \def\author##1{\noindent\textbf{##1}}%
   \def\photofilename##1{%
     \includegraphics[scale=1]{##1}\\
     }%
   }%
- {}%
+ {\csuse{vtxml@bio@stop}}%
 
 %% old style support
 \newenvironment{keyword}[1][]{\begin{keywords}[#1]}{\end{keywords}}

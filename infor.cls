@@ -16,7 +16,7 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2026/05/20 v0.17.06 Informatica Journal class]
+\ProvidesClass{infor}[2026/07/27 v0.23.08 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
@@ -52,6 +52,10 @@
 \DeclareRobustCommand\arxivurl[1]{\url{#1}}
 
 \InputIfFileExists{infor.cfg}{}{}
+
+\ifcsundef{jobstart@date@info}%
+  {\xdef\jobstart@date@info{\the\year\two@digits{\the\month}\two@digits{\the\day}}}%
+  {}
 
 \def\@journal{Informatica}
 \def\@journalabbrev{Informatica}
@@ -517,6 +521,14 @@
     \egroup
     \gdef\first@keyword@env{1}%
   }
+\ifnum\jobstart@date@info>20260716\relax
+  \let\keyword\keywords
+  \let\endkeyword\endkeywords  
+  \let\keywords\@undefined
+  \let\endkeywords\@undefined
+\else
+  \newenvironment{keyword}[1][]{\begin{keywords}[#1]}{\end{keywords}}
+\fi
 
 \newif\if@firstkwd
 \def\kwd@sep{{\csuse{vtxml@suppress@output}\unskip, }}
@@ -791,6 +803,7 @@
   \def\@evenhead{\small\rlap{\thepage}\hfill\textit{\leftmark}\hfill}%
   %% reserved 3 digits for page number 
   \def\pseudo@head@line{{%
+      \csuse{vtxml@suppress@output}%
       \small
       \hfil{\itshape\rightmark}\hfil
       \hbox{\quad 000}}%
@@ -850,6 +863,7 @@
 \def\copyright@sign{{\copyrf\char'323}}
 \def\copyright@signa{{\copyrfa\char'323}}
 \def\rtitleheadline{%
+  \csuse{vtxml@suppress@output}%
   \footnotesize \@JOURNAL, \@pubyear,\ Vol. \@volume, No. \@issue, \@ppages
   \hfill {\small \thepage}\break
   \copyright@sign\ \@pubyear\ \textit{\@publisher}\hfill\break
@@ -1388,8 +1402,8 @@
 \let\betal@style\relax
 \def\betal{{\betal@style et al.}}%
 \let\inlinecite\cite
-\def\bjtitle#1{\textit{#1}}
-\def\bbtitle#1{\textit{#1}}
+\def\bjtitle#1{\textit{\csuse{vtxml@bjtitle@start}#1\csuse{vtxml@bjtitle@stop}}}
+\def\bbtitle#1{\textit{\csuse{vtxml@bbtitle@start}#1\csuse{vtxml@bbtitle@stop}}}
 
 \def\bibfont{\footnotesize}
 \def\bibsection{\section*{\refname}}
@@ -1574,6 +1588,7 @@
     \def\ead##1##{\@gobble}%
     \def\inits##1{\def\@inits{##1}\@inits}%
     \let\fnms\@gobble
+    \let\orcid\@gobble
   }
 \def\runauthor@etal{\space et al.}
 \def\runauthor@author@output#1{{%
@@ -2363,8 +2378,10 @@
 \newenvironment{acknowledgement}[1][]%
   {%
     \setkeys{acknowledgement}{#1}%
+    \csuse{vtxml@ack@start}%
     \section*{\acknowledgement@title}%
   }{%
+    \csuse{vtxml@ack@stop}%
     \par
   }
 
@@ -2405,7 +2422,10 @@
         \clubpenalty\@M
         {%
           %\sffamily
-          \bfseries#1\\\\%
+          \csuse{vtxml@fundingname@start}%
+          \bfseries#1%
+          \csuse{vtxml@fundingname@stop}%
+          \\\\%
         }%
         %\unskip\hskip0.5em\relax
       \else
@@ -2413,8 +2433,10 @@
         \everypar{}%
       \fi
       }%
+    \csuse{vtxml@funding@start}%
     \ignorespaces
   }{%
+    \csuse{vtxml@funding@stop}%
     \par
     \vskip\baselineskip
     \aftergroup\@afterbox
@@ -2457,8 +2479,6 @@
   }%
  {\csuse{vtxml@bio@stop}}%
 
-%% old style support
-\newenvironment{keyword}[1][]{\begin{keywords}[#1]}{\end{keywords}}
 \def\pf{\begin{proof}}
 \def\endpf{\end{proof}}
 \let\noqed\relax
@@ -2473,7 +2493,7 @@
 %%%%%%%%%%%%%%% CONTTABLE
 \newtoks\table@head
 
-\long\def\thead#1\endthead{\global\table@head{#1}#1}
+\long\def\thead#1\endthead{\global\table@head{#1}#1\noalign{\csuse{vtxml@tbody@start}}}
 \def\contthead{\the\table@head}
 
 \let\contpart\relax
@@ -2501,7 +2521,7 @@
 
 \def\contcaption#1{\ContinuedFloat\caption{\contcaptionbraces@left\textit{#1}\contcaptionbraces@right}}
 
-\def\continued#1{\rightline{(\textit{#1})}}
+\def\continued#1{{\csuse{vtxml@suppress@output}\rightline{(\textit{#1})}}}
 
 \@namedef{contfigure*}{\@nameuse{figure*}}
 \@namedef{endcontfigure*}{\@nameuse{endfigure*}}

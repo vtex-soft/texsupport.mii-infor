@@ -16,7 +16,7 @@
 %% Either version 1.3 or (at your option) any later version.
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{infor}[2026/07/27 v0.23.08 Informatica Journal class]
+\ProvidesClass{infor}[2026/09/28 v0.24.09 Informatica Journal class]
 \def\fmt@name{infor}
 
 \RequirePackage{etoolbox}
@@ -458,10 +458,18 @@
     \egroup
   }
 
+\def\keyword@PACS{{\it PACS\keywords@prefixsep}}
+\def\keyword@JEL{{\textbf{JEL~classification}\keywords@prefixsep}}
+\def\keyword@KWD{{\textbf{Key words\keywords@prefixsep}}}
+\def\keyword@class{KWD}
+\define@key{keyword}{class}{\def\keyword@class{#1}}
+\def\keywordsname{\csname keyword@\keyword@class\endcsname}%
+  
 \def\keywords@prefixsep{{\csuse{vtxml@suppress@output}:\space}}
 \newcount\keyboxcnt
-\newenvironment{keywords}[1][]%
+\newenvironment{keywords}[1][class=KWD]%
   {%
+    \setkeys{keyword}{#1}%
     \expandafter\newsavebox\csname keybox#1\endcsname
     \@ifundefined{keybox@list}
       {%
@@ -469,32 +477,6 @@
       }{%
         \csxappto{keybox@list}{,keybox#1}%
       }%
-    \def\@tempa{#1}%
-    \def\PACS@name{PACS}%
-    \def\JEL@name{JEL}%
-    \def\MSC@MMX@name{MSC2010}%
-    \ifx\@tempa\@empty
-      \def\keywords@prefix{\textbf{Key words\keywords@prefixsep}}%
-    \else
-      \ifx\@tempa\PACS@name
-        \def\keywords@prefix{\it PACS\keywords@prefixsep}%
-      \else
-        \ifx\@tempa\JEL@name
-          \def\keywords@prefix{\textbf{JEL~classification}\keywords@prefixsep}%
-        \else
-          \ifx\@tempa\MSC@MMX@name
-            \def\keywords@prefix{\textbf{2010~MSC}\keywords@prefixsep}%
-            \def\MSC@active@keywords{1}%
-          \else
-            \def\keywords@prefix{\textbf{#1~MSC}\keywords@prefixsep}%
-            \def\msc@tempa{2010}%
-            \ifx\@tempa\msc@tempa
-              \def\MSC@active@keywords{1}%
-            \fi
-          \fi
-        \fi
-      \fi
-    \fi
     \@firstkwdtrue
     \global\advance\keyboxcnt\@ne
     \global\expandafter\setbox\csname keybox#1\endcsname=\vbox\bgroup
@@ -511,7 +493,7 @@
       \noindent
       \csuse{vtxml@keyword@start}%
       \csuse{vtxml@keywordsname@start}%
-      {\keywords@prefix}%
+      {\keywordsname}%
       \csuse{vtxml@keywordsname@stop}%
       \raggedright % Keywords are not justified.
       \ignorespaces
@@ -527,7 +509,7 @@
   \let\keywords\@undefined
   \let\endkeywords\@undefined
 \else
-  \newenvironment{keyword}[1][]{\begin{keywords}[#1]}{\end{keywords}}
+  \newenvironment{keyword}[1][class=KWD]{\begin{keywords}[#1]}{\end{keywords}}
 \fi
 
 \newif\if@firstkwd
@@ -1408,7 +1390,7 @@
 \def\bibfont{\footnotesize}
 \def\bibsection{\section*{\refname}}
 
-\def\MR@url{http://www.ams.org/mathscinet-getitem?mr=}
+\def\MR@url{https://mathscinet.ams.org/mathscinet-getitem?mr=}
 \def\MR#1{\href{\MR@url#1}{MR#1}}
 
 
@@ -1511,7 +1493,7 @@
 \def\set@proof@mr{%
   \define@key{bid}{mr}{%
     \@nameuse{startchkuriskip}%
-    \safe@href{http://www.ams.org/mathscinet-getitem?mr=##1}{MR##1}%
+    \safe@href{https://mathscinet.ams.org/mathscinet-getitem?mr=##1}{MR##1}%
     \@nameuse{endchkuriskip}%
     \ignorespaces
     }%
